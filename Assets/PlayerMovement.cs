@@ -4,32 +4,36 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float movementSpeed = 2f;
+    public float movementSpeed = 10f;
 
     [SerializeField] private Rigidbody playerRb;
+
+    bool isGrounded = true;
 
     private void Start()
     {
         playerRb = GetComponent<Rigidbody>();
     }
 
-
-    private void FixedUpdate()
+    private void OnCollisionEnter(Collision collision)
     {
-        float inputx = Input.GetAxis("Horizontal");
-        float inputz = Input.GetAxis("Vertical");
-
-        Vector3 moveDirection = (transform.forward * inputz + transform.right * inputx) * movementSpeed * 100 * Time.deltaTime;
-        playerRb.velocity = new(moveDirection.x, playerRb.velocity.y, moveDirection.z);
-
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (collision.gameObject.tag == "Ground")
         {
-            movementSpeed *= 1.5f;
+            isGrounded = true;
         }
+    }
 
-        else if (Input.GetKeyUp(KeyCode.LeftShift))
+    private void Update()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+
+        transform.Translate(horizontal, 0, vertical);
+
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
-            movementSpeed = 2f;
+            playerRb.AddForce(new Vector3(0,5,0), ForceMode.Impulse);
+            isGrounded = false;
         }
 
     }
