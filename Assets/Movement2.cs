@@ -1,11 +1,12 @@
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class Movement2 : MonoBehaviour
 {
     public float movementSpeed = 2f;
     public float jumpForce = 5f;
 
     [SerializeField] private Rigidbody playerRb;
+    private bool isGrounded;
 
     private void Start()
     {
@@ -32,9 +33,25 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = false;
         }
     }
 }
